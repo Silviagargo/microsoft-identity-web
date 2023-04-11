@@ -133,6 +133,11 @@ namespace Microsoft.Identity.Web
                     .WithCcsRoutingHint(backUpAuthRoutingHint)
                     .WithSpaAuthorizationCode(mergedOptions.WithSpaAuthCode);
 
+                if(mergedOptions.ExtraQueryParameters != null)
+                {
+                    builder.WithExtraQueryParameters((Dictionary<string, string>)mergedOptions.ExtraQueryParameters);
+                }
+
                 if (!string.IsNullOrEmpty(authCodeRedemptionParameters.Tenant))
                 {
                     builder.WithTenantId(authCodeRedemptionParameters.Tenant);

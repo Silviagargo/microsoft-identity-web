@@ -7,5 +7,6 @@
     <ProjectReference Include="..\..\..\src\Microsoft.Identity.Web.MicrosoftGraph\Microsoft.Identity.Web.MicrosoftGraph.csproj" />
     <ProjectReference Include="..\..\..\src\Microsoft.Identity.Web.UI\Microsoft.Identity.Web.UI.csproj" />
     <ProjectReference Include="..\..\..\src\Microsoft.Identity.Web\Microsoft.Identity.Web.csproj" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.53.0-preview" />
   </ItemGroup>
 </Project>

@@ -375,6 +375,14 @@ namespace Microsoft.Identity.Web
                                 additionClaims);
                         }
 
+                        if (mergedOptions.ExtraQueryParameters != null)
+                        {
+                            foreach (var ExtraQP in mergedOptions.ExtraQueryParameters)
+                            {
+                                context.ProtocolMessage.SetParameter(ExtraQP.Key, ExtraQP.Value);
+                            }                            
+                        }
+
                         if (mergedOptions.IsB2C)
                         {
                             // When a new Challenge is returned using any B2C user flow different than susi, we must change

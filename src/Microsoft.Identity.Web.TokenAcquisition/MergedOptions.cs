@@ -48,6 +48,7 @@ namespace Microsoft.Identity.Web
         public LogLevel LogLevel { get; set; }
         public string? RedirectUri { get; set; }
         public bool EnableCacheSynchronization { get; set; }
+        public IDictionary<string, string>? ExtraQueryParameters { get; set; }
         internal bool MergedWithCca { get; set; }
 
         internal static void UpdateMergedOptionsFromMicrosoftIdentityOptions(MicrosoftIdentityOptions microsoftIdentityOptions, MergedOptions mergedOptions)
@@ -296,6 +297,11 @@ namespace Microsoft.Identity.Web
             mergedOptions.ClientCredentialsUsingManagedIdentity ??= microsoftIdentityOptions.ClientCredentialsUsingManagedIdentity;
 
             mergedOptions._confidentialClientApplicationOptions = null;
+
+            if ((mergedOptions.ExtraQueryParameters == null || !mergedOptions.ExtraQueryParameters.Any()) && microsoftIdentityOptions.ExtraQueryParameters != null)
+            {
+                mergedOptions.ExtraQueryParameters = microsoftIdentityOptions.ExtraQueryParameters;
+            }
         }
 
         internal static void UpdateMergedOptionsFromConfidentialClientApplicationOptions(ConfidentialClientApplicationOptions confidentialClientApplicationOptions, MergedOptions mergedOptions)
@@ -518,6 +524,12 @@ namespace Microsoft.Identity.Web
             {
                 mergedOptions.TokenDecryptionCredentials = microsoftIdentityApplicationOptions.TokenDecryptionCredentials;
             }
+
+            if ((mergedOptions.ExtraQueryParameters == null || !mergedOptions.ExtraQueryParameters.Any()) && microsoftIdentityApplicationOptions.ExtraQueryParameters != null)
+            {
+                mergedOptions.ExtraQueryParameters = microsoftIdentityApplicationOptions.ExtraQueryParameters;
+            }
+
         }
 
         private static IEnumerable<CredentialDescription> ComputeFromLegacyClientCredentials(MicrosoftIdentityOptions microsoftIdentityOptions)
