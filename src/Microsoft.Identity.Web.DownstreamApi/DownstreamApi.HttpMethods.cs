@@ -22,9 +22,20 @@ namespace Microsoft.Identity.Web
             where TOutput : class
         {
             DownstreamApiOptions effectiveOptions = MergeOptions(serviceName, downstreamApiOptionsOverride, HttpMethod.Get);
-            HttpResponseMessage response = await CallApiInternalAsync(serviceName, effectiveOptions, false, null, user, cancellationToken).ConfigureAwait(false);
-
-            return await DeserializeOutput<TOutput>(response, effectiveOptions).ConfigureAwait(false);
+            
+            try
+            {
+                HttpResponseMessage response = await CallApiInternalAsync(serviceName, effectiveOptions, false, null, user, cancellationToken).ConfigureAwait(false);
+                return await DeserializeOutput<TOutput>(response, effectiveOptions).ConfigureAwait(false);
+            }
+            catch(InvalidOperationException ex)
+            {
+                Logger.EffectiveOptionsError(
+                    _logger, 
+                    effectiveOptions.BaseUrl!, 
+                    effectiveOptions.RelativePath!, ex);
+                throw;
+            }
         }
 
         /// <inheritdoc/>
