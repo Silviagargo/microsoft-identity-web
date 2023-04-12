@@ -48,7 +48,6 @@ namespace Microsoft.Identity.Web
         public LogLevel LogLevel { get; set; }
         public string? RedirectUri { get; set; }
         public bool EnableCacheSynchronization { get; set; }
-        public IDictionary<string, string>? ExtraQueryParameters { get; set; }
         internal bool MergedWithCca { get; set; }
 
         internal static void UpdateMergedOptionsFromMicrosoftIdentityOptions(MicrosoftIdentityOptions microsoftIdentityOptions, MergedOptions mergedOptions)

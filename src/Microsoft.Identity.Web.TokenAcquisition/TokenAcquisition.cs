@@ -133,7 +133,7 @@ namespace Microsoft.Identity.Web
                     .WithCcsRoutingHint(backUpAuthRoutingHint)
                     .WithSpaAuthorizationCode(mergedOptions.WithSpaAuthCode);
 
-                if(mergedOptions.ExtraQueryParameters != null)
+                if (mergedOptions.ExtraQueryParameters != null)
                 {
                     builder.WithExtraQueryParameters((Dictionary<string, string>)mergedOptions.ExtraQueryParameters);
                 }
@@ -359,7 +359,14 @@ namespace Microsoft.Identity.Web
             {
                 if (tokenAcquisitionOptions.ExtraQueryParameters != null)
                 {
-                    builder.WithExtraQueryParameters(new Dictionary<string, string>(tokenAcquisitionOptions.ExtraQueryParameters));
+                    if (mergedOptions.ExtraQueryParameters != null)
+                    {
+                        builder.WithExtraQueryParameters((Dictionary<string, string>)(MergeExtraQueryParameters(mergedOptions, tokenAcquisitionOptions)));
+                    }
+                    else
+                    {
+                        builder.WithExtraQueryParameters((Dictionary<string, string>)(tokenAcquisitionOptions.ExtraQueryParameters));
+                    }
                 }
                 if (tokenAcquisitionOptions.ExtraHeadersParameters != null)
                 {
@@ -602,7 +609,7 @@ namespace Microsoft.Identity.Web
                 {
                     builder.WithClientCredentials(
                         mergedOptions.ClientCredentials!,
-                        _logger, 
+                        _logger,
                         _credentialsLoader,
                         new CredentialSourceLoaderParameters(mergedOptions.ClientId!, authority));
                 }
@@ -714,7 +721,14 @@ namespace Microsoft.Identity.Web
                     {
                         if (tokenAcquisitionOptions.ExtraQueryParameters != null)
                         {
-                            builder.WithExtraQueryParameters(new Dictionary<string, string>(tokenAcquisitionOptions.ExtraQueryParameters));
+                            if (mergedOptions.ExtraQueryParameters != null)
+                            {
+                                builder.WithExtraQueryParameters((Dictionary<string, string>)(MergeExtraQueryParameters(mergedOptions, tokenAcquisitionOptions)));
+                            }
+                            else
+                            {
+                                builder.WithExtraQueryParameters((Dictionary<string, string>)(tokenAcquisitionOptions.ExtraQueryParameters));
+                            }
                         }
                         if (tokenAcquisitionOptions.ExtraHeadersParameters != null)
                         {
@@ -849,7 +863,18 @@ namespace Microsoft.Identity.Web
             {
                 if (tokenAcquisitionOptions.ExtraQueryParameters != null)
                 {
-                    builder.WithExtraQueryParameters(new Dictionary<string, string>(tokenAcquisitionOptions.ExtraQueryParameters));
+                    if (mergedOptions.ExtraQueryParameters != null)
+                    {
+                        builder.WithExtraQueryParameters((Dictionary<string, string>)(MergeExtraQueryParameters(mergedOptions, tokenAcquisitionOptions)));
+                    }
+                    else
+                    {
+                        builder.WithExtraQueryParameters((Dictionary<string, string>)(tokenAcquisitionOptions.ExtraQueryParameters));
+                    }
+                }
+                else if (mergedOptions.ExtraQueryParameters != null)
+                {
+                    builder.WithExtraQueryParameters((Dictionary<string, string>)mergedOptions.ExtraQueryParameters);
                 }
                 if (tokenAcquisitionOptions.ExtraHeadersParameters != null)
                 {
@@ -887,6 +912,20 @@ namespace Microsoft.Identity.Web
             }
 
             return builder.ExecuteAsync(tokenAcquisitionOptions != null ? tokenAcquisitionOptions.CancellationToken : CancellationToken.None);
+        }
+
+        internal static IDictionary<string, string> MergeExtraQueryParameters(
+            MergedOptions mergedOptions,
+            TokenAcquisitionOptions tokenAcquisitionOptions)
+        {
+            var mergedDict = tokenAcquisitionOptions!.ExtraQueryParameters;
+            foreach (var pair in mergedOptions!.ExtraQueryParameters!)
+            {
+                if (!mergedDict!.ContainsKey(pair.Key))
+                    mergedDict.Add(pair.Key, pair.Value);
+            }
+
+            return mergedDict!;
         }
 
         protected static bool AcceptedTokenVersionMismatch(MsalUiRequiredException msalServiceException)
